@@ -1,74 +1,32 @@
 # zed-files
 
-Ma config Zed pour reproduire mon setup rapidement.
+Ma config Zed + scripts de bootstrap de projets.
 
 ## Installation
 
 ```bash
 git clone <repo-url> ~/zed-files
 cd ~/zed-files
-chmod +x install.sh
 ./install.sh
 ```
 
-Le script crée des symlinks de ce repo vers `~/.config/zed/`, donc toute modification faite dans Zed se reflète directement ici.
+Crée des symlinks de ce repo vers `~/.config/zed/`. Toute modif faite dans Zed se reflète directement ici.
 
-## Contenu
+> **Note** : Zed peut écraser les symlinks en sauvegardant ses settings. Relancer `./install.sh` pour les restaurer.
 
-| Fichier | Description |
-|---|---|
-| `settings.json` | Préférences principales (fonts, thème, langages) |
-| `keymap.json` | Raccourcis clavier custom |
-| `templates/.zed/debug.json` | Configs de debug Python |
-| `templates/.zed/tasks.json` | Tâches Python (pytest, run, ruff) |
-| `templates/pyproject.toml` | Config ruff pour un projet Python |
 
-## Utilisation des templates Python
-
-Copier les templates dans la racine d'un projet :
+## Bootstrap projet Python
 
 ```bash
-cp -r ~/zed-files/templates/.zed <mon-projet>/
-cp ~/zed-files/templates/pyproject.toml <mon-projet>/   # si pas déjà un pyproject.toml
+./new-python-project.sh <nom-projet> <dossier-parent>
 ```
 
-### Tâches disponibles (`cmd+shift+p` → `task: spawn`)
+Crée un projet avec : `uv`, `typer` (CLI entrypoint), `polars`, `pydantic`, `loguru`, `ruff`, `ty`, `pytest`, `pre-commit`.
 
-| Tâche | Description |
-|---|---|
-| Python: run current file | Lance le fichier courant |
-| pytest: all | Tous les tests du projet |
-| pytest: current file | Tests du fichier courant |
-| pytest: current function | Test de la fonction sous le curseur |
-| ruff: check | Lint du projet entier |
+## Bootstrap package R
 
-### Configs de debug disponibles
+```bash
+./new-r-package.sh <nom-package> <dossier-parent>
+```
 
-| Config | Description |
-|---|---|
-| Python: fichier courant | Lance `$ZED_FILE` avec debugpy |
-| Python: fichier courant avec args | Idem + arguments à remplir |
-| Python: module (-m) | Lance un module (`python -m ...`) |
-| Python: attach (port 5678) | Attache à un process déjà lancé |
-
-## Fonts requises
-
-- **IBM Plex Mono** — font principale de l'éditeur
-- **FiraCode Nerd Font Mono** — font du terminal
-
-## Extensions installées
-
-- `material-icon-theme` — icônes fichiers
-- `colored-zed-icons-theme` — icônes colorées
-- `html` — support HTML
-- `r` — support R (avec serveur `air`)
-- `rainbow-csv` — colorisation CSV
-- `toml` — support TOML
-
-## Highlights config
-
-- Thème : One Dark / One Light (selon système)
-- Keymap base : VSCode
-- Python : `ty` LSP + `ruff` formatter + organise imports on save, line length 88
-- R : serveur de langage `air`
-- Minimap toujours visible
+Crée un package R avec : `renv`, `devtools`, `roxygen2`, `testthat`, `dplyr`, `data.table`, `lubridate`, `rlang`, `cli`. Licence MIT et structure testthat configurées via `usethis`.
