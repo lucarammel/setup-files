@@ -40,9 +40,13 @@ for ext in "${extensions[@]}"; do
 done
 
 chmod +x "$REPO_DIR/new-python-project.sh"
+chmod +x "$REPO_DIR/new-r-package.sh"
 
 echo ""
 echo "Done. Open Zed and your config will be active."
 echo ""
 echo "Pour créer un nouveau projet Python :"
-echo "  ~/zed-files/new-python-project.sh <nom-projet>"
+echo "  ~/zed-files/new-python-project.sh <nom-projet> <dossier-parent>"
+echo ""
+echo "Pour créer un package R :"
+echo "  ~/zed-files/new-r-package.sh <nom-package> <dossier-parent>"

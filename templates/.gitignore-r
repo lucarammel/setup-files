@@ -1,0 +1,38 @@
+# R session
+.Rhistory
+.Rapp.history
+.RData
+.RDataTmp
+.Ruserdata
+
+# R package check
+/*.Rcheck/
+*-Ex.R
+
+# RStudio
+.Rproj.user/
+
+# renv (garder renv.lock, ignorer la librairie)
+renv/library/
+renv/local/
+renv/python/
+renv/sandbox/
+renv/staging/
+
+# knitr / rmarkdown
+*_cache/
+/cache/
+*.utf8.md
+*.knit.md
+
+# pkgdown
+docs/
+
+# vignettes compilées
+vignettes/*.html
+vignettes/*.pdf
+
+# divers
+.httr-oauth
+.Renviron
+po/*~

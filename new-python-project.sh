@@ -59,7 +59,7 @@ git init
 echo "Initialisation de l'environnement uv..."
 uv venv
 uv add typer polars pydantic loguru
-uv add pytest pytest-cov ruff ty pre-commit --dev
+uv add pytest pytest-cov ruff ty pre-commit jupyter ipython --dev
 
 # Pre-commit
 uv run pre-commit install
