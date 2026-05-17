@@ -1,12 +1,12 @@
-# zed-files
+# setup-files
 
 Ma config Zed + scripts de bootstrap de projets.
 
 ## Installation
 
 ```bash
-git clone <repo-url> ~/zed-files
-cd ~/zed-files
+git clone <repo-url> ~/setup-files
+cd ~/setup-files
 ./install.sh
 ```
 
