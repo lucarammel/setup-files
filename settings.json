@@ -7,6 +7,10 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "git_panel": {
+    "tree_view": true
+  },
+  "cli_default_open_behavior": "new_window",
   "active_pane_modifiers": {
     "border_size": 0.0
   },
