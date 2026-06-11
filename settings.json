@@ -7,7 +7,22 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "project_panel": {
+    "dock": "left"
+  },
+  "outline_panel": {
+    "dock": "left"
+  },
+  "collaboration_panel": {
+    "dock": "left"
+  },
+  "agent": {
+    "dock": "right",
+    "favorite_models": [],
+    "model_parameters": []
+  },
   "git_panel": {
+    "dock": "left",
     "tree_view": true
   },
   "cli_default_open_behavior": "new_window",
@@ -26,6 +41,9 @@
   "buffer_font_family": "IBM Plex Mono",
   "agent_servers": {
     "claude-acp": {
+      "default_config_options": {
+        "model": "opus"
+      },
       "type": "registry"
     }
   },
@@ -39,7 +57,7 @@
   },
   "languages": {
     "Python": {
-      "language_servers": ["ty", "!basedpyright"],
+      "language_servers": ["ty", "ruff", "!basedpyright"],
       "code_actions_on_format": {
         "source.organizeImports.ruff": true,
         "source.fixAll.ruff": true
