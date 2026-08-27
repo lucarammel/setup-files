@@ -42,6 +42,7 @@
   "agent_servers": {
     "claude-acp": {
       "default_config_options": {
+        "fast": false,
         "model": "opus"
       },
       "type": "registry"
@@ -58,6 +59,7 @@
   "languages": {
     "Python": {
       "language_servers": ["ty", "ruff", "!basedpyright"],
+      "format_on_save": "on",
       "code_actions_on_format": {
         "source.organizeImports.ruff": true,
         "source.fixAll.ruff": true
