@@ -71,7 +71,14 @@
       }
     },
     "R": {
-      "language_servers": ["air"]
+      "language_servers": ["air"],
+      "format_on_save": "on",
+      "formatter": {
+        "external": {
+          "command": "air",
+          "arguments": ["format", "--stdin-file-path", "{buffer_path}"]
+        }
+      }
     }
   }
 }
