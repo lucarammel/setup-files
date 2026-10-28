@@ -60,6 +60,7 @@ echo "Initialisation de l'environnement uv..."
 uv venv
 uv add typer polars pydantic loguru
 uv add pytest pytest-cov ruff ty pre-commit jupyter ipython --dev
+uv add zensical "mkdocstrings[python]"--group docs
 
 # Pre-commit
 uv run pre-commit install
