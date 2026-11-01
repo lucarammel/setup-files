@@ -11,7 +11,7 @@ ASSUME_YES=false
 confirm() {
   # usage: confirm "Question ?"
   $ASSUME_YES && return 0
-  read -r -p "$1 [o/N] " answer
+  read -r -p "$1 [y/N] " answer
   [[ "$answer" =~ ^[oOyY]$ ]]
 }
 
