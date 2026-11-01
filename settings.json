@@ -7,6 +7,16 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "auto_install_extensions": {
+    "material-icon-theme": true,
+    "r": true,
+    "rainbow-csv": true,
+    "toml": true,
+    "colored-zed-icons-theme": true,
+    "docker-compose": true,
+    "dockerfile": true,
+    "typst": true
+  },
   "project_panel": {
     "dock": "left"
   },
