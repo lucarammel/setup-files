@@ -28,8 +28,8 @@ echo "OS détecté : $OS"
 # ---------- Listes d'outils (à adapter) ----------
 # Astuce : `brew leaves` et `brew list --cask` sur ton Mac pour retrouver tes outils
 # ---------- Listes d'outils ----------
-BREW_FORMULAE=(bat btop colima gh mole node rtk starship tree typst uv glab)
-BREW_CASKS=(basictex bruno maccy r-app stats zed)
+BREW_FORMULAE=(bat btop colima gh mole node rtk starship tree typst uv glab npm)
+BREW_CASKS=(basictex bruno r-app zed)
 
 # Paquets disponibles directement dans apt
 APT_PACKAGES=(git curl build-essential bat btop gh nodejs npm tree r-base texlive-latex-base)
