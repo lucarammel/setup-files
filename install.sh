@@ -19,6 +19,7 @@ confirm() {
 case "$(uname -s)" in
   Darwin) OS="macos" ;;
   Linux)
+    # Debian, Ubuntu et dérivés (Mint, Pop!_OS...) : tous utilisent apt
     if command -v apt >/dev/null 2>&1; then OS="debian"
     else OS="linux-other"; fi ;;
   *) OS="unknown" ;;
@@ -108,36 +109,43 @@ case "$OS" in
   *)      echo "OS non supporté pour l'installation automatique des outils, étape ignorée." ;;
 esac
 
-# ---------- zsh + starship ----------
-setup_zsh() {
-  echo ""
-  echo "Configuration de zsh..."
-
-  # 1. Installer zsh si absent (macOS l'a déjà de base)
-  if ! command -v zsh >/dev/null 2>&1; then
-    case "$OS" in
-      debian)
-        if confirm "zsh n'est pas installé. L'installer via apt ?"; then
-          sudo apt install -y zsh
-        fi ;;
-      *) echo "  ! zsh introuvable, installe-le manuellement."; return ;;
-    esac
+# ---------- zsh + Oh My Zsh + starship ----------
+install_zsh() {
+  command -v zsh >/dev/null 2>&1 && return 0
+  # macOS l'a déjà de base ; sur apt on propose de l'installer
+  if [ "$OS" = "debian" ] && confirm "zsh n'est pas installé. L'installer via apt ?"; then
+    sudo apt install -y zsh
   fi
-  command -v zsh >/dev/null 2>&1 || return
+  command -v zsh >/dev/null 2>&1 || { echo "  ! zsh introuvable, installe-le manuellement."; return 1; }
+}
 
-  # 2. Le définir comme shell par défaut
-  if [ "$(basename "$SHELL")" != "zsh" ]; then
-    if confirm "Définir zsh comme shell par défaut ?"; then
-      ZSH_PATH="$(command -v zsh)"
-      grep -qx "$ZSH_PATH" /etc/shells || echo "$ZSH_PATH" | sudo tee -a /etc/shells >/dev/null
-      chsh -s "$ZSH_PATH"
-      echo "  → Effectif à la prochaine connexion (ouvre un nouveau terminal)."
-    fi
-  else
+set_default_shell() {
+  if [ "$(basename "$SHELL")" = "zsh" ]; then
     echo "  ✓ zsh est déjà le shell par défaut"
+    return
   fi
+  confirm "Définir zsh comme shell par défaut ?" || return 0
+  local zsh_path
+  zsh_path="$(command -v zsh)"
+  grep -qx "$zsh_path" /etc/shells || echo "$zsh_path" | sudo tee -a /etc/shells >/dev/null
+  chsh -s "$zsh_path"
+  echo "  → Effectif à la prochaine connexion (ouvre un nouveau terminal)."
+}
 
-  # 3. ~/.zshrc : PATH, puis starship en dernier
+install_ohmyzsh() {
+  if [ -d "$HOME/.oh-my-zsh" ]; then
+    echo "  ✓ Oh My Zsh déjà installé"
+    return
+  fi
+  confirm "Installer Oh My Zsh ?" || return 0
+  # L'installeur écrit un ~/.zshrc neuf et sauvegarde l'ancien : on le ré-ajoute
+  RUNZSH=no CHSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  if [ -f "$HOME/.zshrc.pre-oh-my-zsh" ]; then
+    { echo; echo "# --- ancien ~/.zshrc ---"; cat "$HOME/.zshrc.pre-oh-my-zsh"; } >> "$HOME/.zshrc"
+  fi
+}
+
+configure_zshrc() {
   touch "$HOME/.zshrc"
 
   if [ "$OS" = "debian" ] && ! grep -q '.local/bin' "$HOME/.zshrc"; then
@@ -145,17 +153,24 @@ setup_zsh() {
     echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.zshrc"
   fi
 
-  if command -v starship >/dev/null 2>&1; then
-    if ! grep -q 'starship init zsh' "$HOME/.zshrc"; then
-      # Ligne vide au cas où le fichier ne finit pas par un retour à la ligne
-      printf '\n# Starship prompt (doit rester en fin de fichier)\neval "$(starship init zsh)"\n' >> "$HOME/.zshrc"
-      echo "  ✓ starship ajouté à ~/.zshrc"
-    else
-      echo "  ✓ starship déjà configuré dans ~/.zshrc"
-    fi
-  else
+  if ! command -v starship >/dev/null 2>&1; then
     echo "  ! starship n'est pas installé, ligne non ajoutée à ~/.zshrc."
+  elif grep -q 'starship init zsh' "$HOME/.zshrc"; then
+    echo "  ✓ starship déjà configuré dans ~/.zshrc"
+  else
+    # starship doit rester en toute fin de fichier
+    printf '\n# Starship prompt (doit rester en fin de fichier)\neval "$(starship init zsh)"\n' >> "$HOME/.zshrc"
+    echo "  ✓ starship ajouté à ~/.zshrc"
   fi
+}
+
+setup_zsh() {
+  echo ""
+  echo "Configuration de zsh..."
+  install_zsh || return 0
+  set_default_shell
+  install_ohmyzsh
+  configure_zshrc
 }
 
 setup_zsh

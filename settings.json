@@ -53,7 +53,7 @@
     "claude-acp": {
       "default_config_options": {
         "fast": false,
-        "model": "opus"
+        "model": "sonnet"
       },
       "type": "registry"
     }
