@@ -29,7 +29,7 @@ echo "OS détecté : $OS"
 # ---------- Listes d'outils (à adapter) ----------
 # Astuce : `brew leaves` et `brew list --cask` sur ton Mac pour retrouver tes outils
 # ---------- Listes d'outils ----------
-BREW_FORMULAE=(bat btop colima gh mole node rtk starship tree typst uv glab npm)
+BREW_FORMULAE=(bat btop colima gh mole node rtk starship tree typst uv glab npm eza fzf)
 BREW_CASKS=(basictex bruno r-app zed)
 
 # Paquets disponibles directement dans apt
@@ -78,7 +78,21 @@ install_tools_debian() {
     fi
   fi
 
+  # eza : dans apt à partir de Debian 13 / Ubuntu 24.04
+  if ! command -v eza >/dev/null 2>&1 && apt-cache show eza >/dev/null 2>&1 \
+     && confirm "Installer eza (apt) ?"; then
+    sudo apt install -y eza
+  fi
+
   # Outils hors apt, via leurs scripts officiels
+  # fzf : la version apt est trop vieille pour `fzf --zsh` (>= 0.48 requis)
+  if ! command -v fzf >/dev/null 2>&1 && confirm "Installer fzf (depuis GitHub) ?"; then
+    git clone --depth 1 https://github.com/junegunn/fzf.git "$HOME/.fzf"
+    "$HOME/.fzf/install" --bin
+    mkdir -p "$HOME/.local/bin"
+    ln -sf "$HOME/.fzf/bin/fzf" "$HOME/.local/bin/fzf"
+  fi
+
   if ! command -v uv >/dev/null 2>&1 && confirm "Installer uv (astral.sh) ?"; then
     curl -LsSf https://astral.sh/uv/install.sh | sh
   fi
@@ -148,19 +162,42 @@ install_ohmyzsh() {
 configure_zshrc() {
   touch "$HOME/.zshrc"
 
+  # starship doit rester en toute fin de fichier : on retire son bloc maintenant
+  # et on le remet après tous les autres ajouts
+  local had_starship=false
+  if grep -q 'starship init zsh' "$HOME/.zshrc"; then
+    had_starship=true
+    grep -v -e 'starship init zsh' -e '^# Starship prompt' "$HOME/.zshrc" > "$HOME/.zshrc.tmp" \
+      && mv "$HOME/.zshrc.tmp" "$HOME/.zshrc"
+  fi
+
   if [ "$OS" = "debian" ] && ! grep -q '.local/bin' "$HOME/.zshrc"; then
     # uv, bat (symlink batcat) et d'autres outils s'installent ici
     echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.zshrc"
   fi
 
-  if ! command -v starship >/dev/null 2>&1; then
-    echo "  ! starship n'est pas installé, ligne non ajoutée à ~/.zshrc."
-  elif grep -q 'starship init zsh' "$HOME/.zshrc"; then
-    echo "  ✓ starship déjà configuré dans ~/.zshrc"
-  else
-    # starship doit rester en toute fin de fichier
+  if command -v eza >/dev/null 2>&1 && ! grep -q 'eza --icons' "$HOME/.zshrc"; then
+    cat >> "$HOME/.zshrc" <<'ALIASES'
+
+# eza : remplaçant de ls (les icônes demandent une Nerd Font dans le terminal)
+alias ls='eza --icons=auto --group-directories-first'
+alias ll='eza -l --icons=auto --group-directories-first --git --header --time-style=relative'
+alias la='ll -a'
+alias lt='eza --tree --level=2 --icons=auto --git-ignore'
+ALIASES
+    echo "  ✓ alias eza ajoutés à ~/.zshrc"
+  fi
+
+  if command -v fzf >/dev/null 2>&1 && ! grep -q 'fzf --zsh' "$HOME/.zshrc"; then
+    printf '\n# fzf : Ctrl-R (historique), Ctrl-T (fichiers), Alt-C (cd)\nsource <(fzf --zsh)\n' >> "$HOME/.zshrc"
+    echo "  ✓ fzf ajouté à ~/.zshrc"
+  fi
+
+  if $had_starship || command -v starship >/dev/null 2>&1; then
     printf '\n# Starship prompt (doit rester en fin de fichier)\neval "$(starship init zsh)"\n' >> "$HOME/.zshrc"
-    echo "  ✓ starship ajouté à ~/.zshrc"
+    echo "  ✓ starship placé en fin de ~/.zshrc"
+  else
+    echo "  ! starship n'est pas installé, ligne non ajoutée à ~/.zshrc."
   fi
 }
 
