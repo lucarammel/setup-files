@@ -65,9 +65,9 @@ REOF
 
 # Configs communes
 cp "$REPO_DIR/templates/README.md" .
-sed -i '' "s/mon-projet/$PACKAGE_NAME/g" README.md
+sed -i.bak "s/mon-projet/$PACKAGE_NAME/g" README.md && rm README.md.bak
 cp "$REPO_DIR/templates/.gitignore-r" .gitignore
-cp -r "$REPO_DIR/templates/.zed" .
+[ -d "$REPO_DIR/templates/.zed" ] && cp -r "$REPO_DIR/templates/.zed" . || true
 
 git add .
 git commit -m "init: $PACKAGE_NAME"

@@ -69,9 +69,6 @@ venv.bak/
 profile_default/
 ipython_config.py
 
-# pyenv
-.python-version
-
 # Celery stuff
 celerybeat-schedule
 celerybeat.pid

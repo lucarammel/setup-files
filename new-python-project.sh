@@ -20,18 +20,18 @@ cd "$PROJECT_DIR"
 
 # pyproject.toml
 cp "$REPO_DIR/templates/pyproject.toml" .
-sed -i '' "s/mon-projet/$PROJECT_NAME/g" pyproject.toml
-sed -i '' "s/mon_projet/$PROJECT_NAME_SNAKE/g" pyproject.toml
+sed -i.bak "s/mon-projet/$PROJECT_NAME/g" pyproject.toml && rm pyproject.toml.bak
+sed -i.bak "s/mon_projet/$PROJECT_NAME_SNAKE/g" pyproject.toml && rm pyproject.toml.bak
 
 # Configs
 cp "$REPO_DIR/templates/.gitignore" .
 cp "$REPO_DIR/templates/.pre-commit-config.yaml" .
 cp "$REPO_DIR/templates/.python-version" .
 cp "$REPO_DIR/templates/README.md" .
-sed -i '' "s/mon-projet/$PROJECT_NAME/g" README.md
+sed -i.bak "s/mon-projet/$PROJECT_NAME/g" README.md && rm README.md.bak
 
 # Zed
-cp -r "$REPO_DIR/templates/.zed" .
+[ -d "$REPO_DIR/templates/.zed" ] && cp -r "$REPO_DIR/templates/.zed" . || true
 
 # Fichiers de départ
 mkdir -p "$PROJECT_NAME_SNAKE"
@@ -60,7 +60,7 @@ echo "Initialisation de l'environnement uv..."
 uv venv
 uv add typer polars pydantic loguru
 uv add pytest pytest-cov ruff ty pre-commit jupyter ipython --dev
-uv add zensical "mkdocstrings[python]"--group docs
+uv add zensical "mkdocstrings[python]" --group docs
 
 # Pre-commit
 uv run pre-commit install
