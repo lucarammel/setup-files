@@ -17,6 +17,9 @@
     "dockerfile": true,
     "typst": true
   },
+  "inlay_hints": {
+      "show_value_hints": false
+  },
   "project_panel": {
     "dock": "left"
   },
