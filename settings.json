@@ -20,6 +20,9 @@
   "inlay_hints": {
       "show_value_hints": false
   },
+  "debugger": {
+      "timeout": 15000
+  },
   "project_panel": {
     "dock": "left"
   },
